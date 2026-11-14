@@ -80,7 +80,6 @@ class Platform(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
