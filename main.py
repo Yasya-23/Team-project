@@ -63,12 +63,12 @@ class Player(pygame.sprite.Sprite):
                 self.vel_y = 0
                 if self.rect.x < 0:
                     self.rect.x = 0
-                if self.rect.x + self.vel_x> WIDTH:
-                    self.rect.x = WIDTH - self.vel_x
-                if self.rect.y < 0:
-                    self.rect.y = 0
-                if self.rect.y + self.vel_y  > HEIGHT:
-                    self.rect.y = HEIGHT - self.vel_y
+                if self.rect.right >  WIDTH:
+                    self.rect.right = WIDTH
+                if self.rect.top < 0:
+                    self.rect.top = 0
+                if self.rect.bottom  > HEIGHT:
+                    self.rect.bottom = HEIGHT
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
@@ -78,8 +78,6 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
-
 
 
 
