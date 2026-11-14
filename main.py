@@ -12,18 +12,18 @@ pygame.display.set_caption("Подобие платформера")
 #Частота кадров, если не понятно
 clock = pygame.time.Clock()
 
-running = True
-while running:
-
-    clock.tick(FPS)
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.fill((100, 0, 0))
-    pygame.display.flip()
-
-pygame.quit()
+# running = True
+# while running:
+#
+#     clock.tick(FPS)
+#
+#     for event in pygame.event.get():
+#         if event.type == pygame.QUIT:
+#             running = False
+#     screen.fill((100, 0, 0))
+#     pygame.display.flip()
+#
+# pygame.quit()
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -37,20 +37,32 @@ class Player(pygame.sprite.Sprite):
         self.vel_y = 0
         self.on_ground = False
 
+
     def update(self, platforms):
+        global all_sprites
         if not self.on_ground:
             self.vel_y += 0.5  #гравитация
         else:
-            self.vel_y = 0
+            pass
 
         self.rect.x += self.vel_x
+        if self.vel_x > 0:
+            for entity in all_sprites:
+                entity.rect.x -= 5
+            bg.rect.x -= 0.5
+        if self.vel_x < 0:
+            for entity in all_sprites:
+                entity.rect.x += 5
+            bg.rect.x += 0.5
 
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_x > 0:  # движется вправо
                     self.rect.right = platform.rect.left
+
                 elif self.vel_x < 0:  # движется влево
                     self.rect.left = platform.rect.right
+
         self.rect.y += int(self.vel_y)
         self.on_ground = False
         for platform in platforms:
@@ -79,10 +91,24 @@ class Platform(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+class Background:
+    def __init__(self, img):
+        self.image = pygame.image.load(img)
+        self.rect = self.image.get_rect(
+            center = (WIDTH // 2, HEIGHT // 2)
+        )
+
+    def draw(self):
+        screen.blit(self.image, self.rect)
+
+all_sprites = pygame.sprite.Group()
+
+bg = Background("fone.png")
 
 def main():
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    global all_sprites
+    # pygame.init()
+    # screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Платформер")
     clock = pygame.time.Clock()
 
@@ -98,7 +124,7 @@ def main():
     platforms.add(Platform(90, 175, 600, 20))
 
 
-    all_sprites = pygame.sprite.Group()
+
 
     all_sprites.add(player)
     all_sprites.add(*platforms)
@@ -117,16 +143,19 @@ def main():
         keys = pygame.key.get_pressed()  #Клавиши
         if keys[pygame.K_a]:
             player.vel_x = -5
+
         if keys[pygame.K_d]:
             player.vel_x = 5
+
         if keys[pygame.K_s]:
             player.vel_x = 0
-        if keys[pygame.K_SPACE]:
-            player.vel_y = -10
+        # if keys[pygame.K_SPACE]:
+        #     player.vel_y = -10
 
         player.update(platforms)
 
         screen.fill((30,30,30))
+        bg.draw()
         for entity in all_sprites:
             screen.blit(entity.image, entity.rect)
 
